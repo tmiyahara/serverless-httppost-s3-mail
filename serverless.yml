@@ -1,0 +1,68 @@
+service: aws-python-form-recieve-notification
+
+frameworkVersion: ">=1.2.0 <2.0.0"
+
+# DRY constants: define all compound/generated names in one place
+# Override args are: .. defaults:
+# --s3_key_base         self:custom.stage
+# --region              us-east-1
+# --stage               dev
+
+custom:
+  your_name: <your-name>
+  app_acronym: form-recieve-notification
+  default_stage: dev
+  defalut_region: us-east-1 
+  stage: ${opt:stage, self:custom.default_stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
+  region: ${opt:region, self:custom.defalut_region}
+  s3_bucket_suffix: ${self:custom.your_name}
+  s3_bucket: ${self:service}-${opt:stage, self:custom.stage}-${self:custom.s3_bucket_suffix}-records
+  s3_key_base: ${opt:s3_key_base, self:custom.stage}
+  s3_bucket_arn: arn:aws:s3:::${self:custom.s3_bucket}
+  s3_role_resource: ${self:custom.s3_bucket_arn}/${self:custom.s3_key_base}/*
+  ses_region: us-east-1
+  mail_recipient: <recipient mail address>
+  mail_sender: <sender mail address>
+
+provider:
+  name: aws
+  runtime: python3.7 # or python3.6, supported as of April 2017
+  region: ${self:custom.region}
+  memorySize: 256 # optional, in MB, default is 1024
+  timeout: 10 # optional, in seconds, default is 6
+  environment:
+    S3_POST_BUCKET: ${self:custom.s3_bucket}
+    S3_POST_KEY_BASE: ${self:custom.s3_key_base}
+    SES_RESION: ${self:custom.ses_region}
+    MAIL_RECIPIENT: ${self:custom.mail_recipient}
+    MAIL_SENDER: ${self:custom.mail_sender}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:*
+      Resource: ${self:custom.s3_role_resource}
+    - Effect: Allow
+      Action:
+        - ses:*
+      Resource: arn:aws:ses:*:*:identity/*
+
+
+functions:
+  create:
+    handler: asset/create.create
+    name: ${self:custom.stack_name}-create
+    events:
+      - http:
+          path: contacts
+          method: post
+          cors: true
+  notification:
+    handler: asset/notification.notification
+    name: ${self:custom.stack_name}-notification
+    events:
+      - s3:
+          bucket: ${self:custom.s3_bucket}
+          event: s3:ObjectCreated:*
+          rules:
+            - prefix: ${self:custom.s3_key_base}
