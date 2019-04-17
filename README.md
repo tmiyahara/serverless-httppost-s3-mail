@@ -9,21 +9,19 @@ authorName: 'Tohiyuki Miyahara'
 authorAvatar: ''
 -->
 
-# POSTされたデータをS3へ保存し、メールで通知するサンプル
+# Serverless Framework サンプル
 
-これは、serveless framework のテンプレートです。任意のフォームでPOSTされた内容をS3のオブジェクトとして保存します。さらに、S3のオブジェクト生成をトリガーにして指定のメールアドレス宛てにメールを送信します。
+serveless framework のテンプレートです。任意のフォームでPOSTされた内容をS3のオブジェクトとして保存し、S3オブジェクト生成をトリガーに指定のメールアドレス宛てにメールを送信します。
 
-## Create
+## Setup
 
 ```bash
-serverless create --template-url https:dsljdsla
+serverless install -u https://github.com/tmiyahara/serverless-httppost-s3-mail -n my-project
 ```
-
-## 設定(sererless.ymlの編集)
 
 serverless.yml ファイルの以下の項目を設定ください
 
-- custom.your_name POSTされた内容を保存するバケット名の重複を避けるため
+- custom.postform_id POSTされた内容を保存するバケット名の重複を避けるため
 - custom.mail_recipient メール送信先(To)アドレスを指定します、事前にSESで受信可能なアドレスに設定が必要
 - custom.mail_sender メール送信元(From)アドレスを指定します、事前にSESで送信可能なアドレスに設定が必要
 
