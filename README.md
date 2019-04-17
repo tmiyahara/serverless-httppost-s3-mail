@@ -53,7 +53,7 @@ resources: 16
 api keys:
   None
 endpoints:
-  POST - https://f7r5srabr3.execute-api.us-east-1.amazonaws.com/dev/contacts)
+  POST - https://xxxxxxxxxx.execute-api.us-east-1.amazonaws.com/dev/contacts)
 functions:
   create: form-recieve-notification-dev-create
   notification: form-recieve-notification-dev-notification
@@ -64,7 +64,7 @@ functions:
 curl コマンドを使って、endpointにHTTPリクエストします。
 
 ```bash
-curl https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/ping
+curl -X POST -H "Content-Type: application/json" -d '{"Name":"Taro Hiro", "Message":"hello"}' https://XXXXXXX.execute-api.us-east-1.amazonaws.com/dev/contacts
 ```
 
 次のようなレスポンスが表示されます。また、設定したメールアドレスにメールが送信されています。
