@@ -1,4 +1,4 @@
-service: aws-python-form-recieve-notification
+service: serverless-httppost-s3-mail
 
 frameworkVersion: ">=1.2.0 <2.0.0"
 
@@ -9,15 +9,14 @@ frameworkVersion: ">=1.2.0 <2.0.0"
 # --stage               dev
 
 custom:
-  your_name: <your-name>
-  app_acronym: form-recieve-notification
+  postform_id: <post form id>
+  app_acronym: posts3mail
   default_stage: dev
   defalut_region: us-east-1 
   stage: ${opt:stage, self:custom.default_stage}
-  stack_name: ${self:custom.app_acronym}-${self:custom.stage}
+  stack_name: ${self:custom.app_acronym}-${self:custom.stage}-${self:custom.postform_id}
   region: ${opt:region, self:custom.defalut_region}
-  s3_bucket_suffix: ${self:custom.your_name}
-  s3_bucket: ${self:service}-${opt:stage, self:custom.stage}-${self:custom.s3_bucket_suffix}-records
+  s3_bucket: ${self:custom.stack_name}-data
   s3_key_base: ${opt:s3_key_base, self:custom.stage}
   s3_bucket_arn: arn:aws:s3:::${self:custom.s3_bucket}
   s3_role_resource: ${self:custom.s3_bucket_arn}/${self:custom.s3_key_base}/*
